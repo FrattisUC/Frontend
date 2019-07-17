@@ -278,6 +278,29 @@ def gen_invite(member, invitee, assignment, accept=False):
 def seed_users(num=25):
     print('Seeding users...')
     users = gen_unique(gen_user, num, 'email')
+    us = collections.OrderedDict([
+        (1, User(
+        name="Seba Vasquez",
+        email='sgvasquez@frattis.cl',
+        is_admin=True)),
+        (2, User(
+        name="Fran Lucchini",
+        email='fran@frattis.cl',
+        is_admin=False)),
+        (3, User(
+        name="Cristian Ruz",
+        email='cruz@frattis.cl',
+        is_admin=False)),
+        (4, User(
+        name="Jurgen Heysen",
+        email='miau@frattis.cl',
+        is_admin=False)),
+        (5, User(
+        name="Frattis Guest",
+        email='guest@frattis.cl',
+        is_admin=False))
+        ]).values()
+    db.session.add_all(us)
     db.session.add_all(users)
     db.session.commit()
 
