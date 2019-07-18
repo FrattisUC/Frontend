@@ -21,6 +21,12 @@ app = create_app(env)
 migrate = Migrate(app, db)
 manager = Manager(app)
 
+# Turn on debugger by default and reloader 
+manager.add_command("runserver", Server(
+    use_debugger = True,
+    use_reloader = True,
+    host = '0.0.0.0') )
+
 class RunTests(Command):
 
     def run(self):
