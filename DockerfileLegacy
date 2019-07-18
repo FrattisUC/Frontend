@@ -11,16 +11,13 @@ RUN apk add --update \
     libffi-dev \
     python-dev \
     gcc \
-    redis \
-    py-virtualenv
+    redis
 
 RUN mkdir /code/
 WORKDIR /code/
 
 ADD requirements.txt .
 
-RUN virtualenv -p python3 env
-RUN source env/bin/activate
 RUN pip3 --timeout=60 install --no-cache-dir -r requirements.txt
 
 RUN ln -sf /dev/stdout /var/log/nginx/access.log && \
@@ -28,13 +25,24 @@ RUN ln -sf /dev/stdout /var/log/nginx/access.log && \
 
 ADD . .
 
+RUN mv docker/nginx/nginx.conf /etc/nginx/nginx.conf && \
+    mv docker/nginx/default.conf /etc/nginx/conf.d/default.conf && \
+    mv docker/supervisor.conf /etc/supervisor.conf && \
+    mv docker/wait-for /wait-for
+
 RUN ./manage.py assets build
 
 RUN rm -rf /var/cache/apk/*
+
+ENV SQL_CA_CERT=/code/BaltimoreCyberTrustRoot.crt.pem
+ENV SCRIPT_NAME=
+ENV GUNICORN_WORKERS=3
+ENV GUNICORN_TIMEOUT=60
+ENV OKPY_LOG_LEVEL=INFO
 
 RUN ./manage.py createdb
 RUN ./manage.py seed
 
 EXPOSE 5000
 
-CMD ["/manage.py runserver"]
+CMD ["/code/docker/run-supervisor.sh"]

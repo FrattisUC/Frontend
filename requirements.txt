@@ -39,6 +39,7 @@ https://github.com/apache/libcloud/archive/9039968249cba20a546e5d1eb54ad2efbfa79
 
 # OAuth
 
+requests-oauthlib==1.0.0
 oauthlib==2.0.2
 Flask-OAuthlib==0.9.4
 

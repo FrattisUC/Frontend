@@ -277,7 +277,7 @@ def gen_invite(member, invitee, assignment, accept=False):
 
 def seed_users(num=25):
     print('Seeding users...')
-    users = gen_unique(gen_user, num, 'email')
+    # users = gen_unique(gen_user, num, 'email')
     us = collections.OrderedDict([
         (1, User(
         name="Seba Vasquez",
@@ -301,7 +301,7 @@ def seed_users(num=25):
         is_admin=False))
         ]).values()
     db.session.add_all(us)
-    db.session.add_all(users)
+    # db.session.add_all(users)
     db.session.commit()
 
 def seed_courses():

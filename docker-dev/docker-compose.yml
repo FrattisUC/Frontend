@@ -1,0 +1,20 @@
+version: '3'
+volumes:
+  postgres_data: {}
+services:
+  nginx:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    restart: always
+    depends_on:
+      - ok-server
+    ports:
+      - 80:80
+  ok-server:
+    command: sh -c "./manage.py server"
+    image: ok-server:latest
+    restart: always
+    ports: 
+      - 5000:5000
+    
