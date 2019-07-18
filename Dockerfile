@@ -22,7 +22,7 @@ RUN pip3 --timeout=60 install --no-cache-dir -r requirements.txt
 
 RUN ./manage.py assets build
 RUN ./manage.py createdb
-#RUN ./manage.py seed
+RUN ./manage.py seed
 
 EXPOSE 5000
 CMD [ "python3", "./manage.py", "runserver"]
