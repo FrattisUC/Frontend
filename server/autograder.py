@@ -20,7 +20,6 @@ logger = logging.getLogger(__name__)
 
 def send_autograder(endpoint, data, autograder_url):
     headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
-
     r = requests.post(autograder_url + endpoint,
                       data=json.dumps(data), headers=headers, timeout=8)
 
