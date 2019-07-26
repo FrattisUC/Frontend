@@ -944,6 +944,28 @@ def autograde(cid, aid):
         return redirect(url_for('.course_job', cid=cid, job_id=job.id))
     return redirect(url_for('.assignment', cid=cid, aid=aid))
 
+@admin.route("/course/<int:cid>/assignments/<int:aid>/frattis_autograde",
+             methods=["POST"])
+@is_staff(course_arg='cid')
+def frattis_autograde(cid, aid):
+    courses, current_course = get_courses(cid)
+    assign = Assignment.query.filter_by(id=aid, course_id=cid).one_or_none()
+    if not assign or not Assignment.can(assign, current_user, 'grade'):
+        flash('Cannot access assignment', 'error')
+        return abort(404)
+    form = forms.CSRFForm()
+    if form.validate_on_submit():
+        job = jobs.enqueue_job(
+            autograder.frattis_autograde_assignment,
+            description='Autograde {}'.format(assign.display_name),
+            result_kind='link',
+            timeout=2 * 60 * 60,  # 2 hours
+            course_id=cid,
+            user_id=current_user.id,
+            assignment_id=assign.id)
+        return redirect(url_for('.course_job', cid=cid, job_id=job.id))
+    return redirect(url_for('.assignment', cid=cid, aid=aid))
+
 
 @admin.route("/course/<int:cid>/assignments/<int:aid>/upload",
             methods=["GET","POST"])
