@@ -3,7 +3,7 @@
 ## Integrantes del Equipo
 
 - Cristian Ruz - Profesor Guía
-- Francisca Lucchini - Supervisora General
+- Francesca Lucchini - Supervisora General
 - José Gutierrez - Desarrollador
 - Sebastián Vásquez - Desarrollador (retirado)
 
@@ -53,16 +53,38 @@ En el archivo *frattisdocs.md* se encuentra un primer borrador de como será la 
 
 Actualmente los métodos relevantes para la comunicación con el servidor corrector están en los archivos *server/autograder.py* y *server/controllers/admin.py*. Agregando un botón "Send to Frattis Autograder", se permite automatizar la generación del job que busca las submissions correspondientes, y sube los archivos *info.json* y *test.json* para realizar el request correspondiente al servidor backend. Dentro de *autograder* y *admin* se deben buscar los métodos con la forma frattis_*(), que son los asociados a la comunicación con el backend.
 
-Actualmente el job, debido a cómo está diseñado por el equipo de OKPY, se queda esperando la respuesta del servidor, con las pruebas ya corregidas, para retornar los resultados para su posterior visualización en el browser. Según el documento *frattisdocs.md* , se ajustará este comportamiento para que el servidor corrector entregue un id de solicitud, para poder utilizar a futuro ese id para revisar si un submission ha sido corregido o no. Parte de ese comportamiento todavía no se encuentra implementado.
+Actualmente el job, debido a cómo está diseñado por el equipo de OKPY, se queda esperando la respuesta del servidor, con las pruebas ya corregidas, para retornar los resultados para su posterior visualización en el browser. Según el documento *frattisdocs.md* , se ajustará este comportamiento para que el servidor corrector entregue un id de solicitud, para poder utilizar a futuro ese id para revisar si un submission ha sido corregido o no. Sin embargo, si el equipo de desarrollo considera que es mejor forma mantener la arquitectura actual, esto se puede hacer sin mayores contratiempos.
 
 ## Trabajo Pendiente
 
-Dentro del trabajo pendiente hay que destacar las siguientes tareas:
+El trabajo pendiente puede resumirse como la comunicación y recepción de las pruebas (y sus correspondientes resulados) con el servidor autograder. Sin embargo, hay dos formas posibles de abordar el trabajo pendiente, ambas viables con la arquitectura actual:
 
-- Terminar de enviar el archivo al servidor backend (esto, coordinar con el encargado de la aplicación correctora).
+1. Crear un job que realice de forma asincrona la solicitud de corrección, y se quede en espera hasta que el corrector termine de revisar.
 
-- Crear un potencial modelo CourseAssignmentPayload, que permita guardar el id del submission.
+2. Enviar una solicitud [POST] al autograder, que este devuelva un *submission_id*, el cual sea utilizado después en otro método para recuperar los resultados en caso que estén listos.
 
-- Crear el método que, dado un id de submission, vaya a buscar los resultados de submission en cuestión.
+Ambos caminos son viables, pero dependerán de los acuerdos que se generen en nuevas instancias del ipre.
 
-- Procesar el resultado del submission de forma de entregar información útil a los encargados y alumnado del curso.
+En caso de decantarse por la primera opción, se deberán realizar las siguientes sub-tareas:
+
+- Utilizar la actitectura de jobs presente en OKPY de forma que envíe las pruebas según el formato pedido.
+
+- Una vez devuelto el resultado, se debe realizar el procesamiento de estos para generar datos útiles.
+
+- Mostrar estos datos en alguna vista.
+
+En caso de decidir la segunda opción, las principales sub-tareas son:
+
+- Crear un modelo que permita guardar el id de una tarea enviada al autograder.
+
+- Enviar una solicitud [POST] al autograder, y guardar la respuesta en este nuevo modelo.
+
+- Crear un método que permita, para una tarea dada, consultar el resultado del autograder.
+
+- Una vez devuelto el resultado, se debe realizar el procesamiento de estos para generar datos útiles.
+
+- Mostrar estos datos en alguna vista.
+
+## Casos a considerar
+
+- Hay que revisar que cuando se haga un request, este no se envíe si ya existe un request para ese alumno / tarea ya en proceso (evitar que un usuario no pueda spamear 1000 requests de la misma tarea)

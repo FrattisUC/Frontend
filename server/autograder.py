@@ -267,19 +267,17 @@ def frattis_autograde_assignment(assignment_id):
     """
     logger = jobs.get_job_logger()
     assignment = Assignment.query.get(assignment_id)
-    #course_submissions = assignment.course_submissions(include_empty=False)
-    #logger.info(assignment.url)
-    #logger.info(course_submissions)
-    #logger.info('Check.')
-    #return
-    #backup_ids = set(fs['backup']['id'] for fs in course_submissions if fs['backup'])
+    course_submissions = assignment.course_submissions(include_empty=False)
     try:
+        # TODO: Hacer el post al autograder, con el contenido formateado correctamente.
         requests.get('https://google.cl').content
+
+        # TODO: Esperar resultados
         logger.info('Works.')
     except ValueError:
         logger.info('Could not autograde backups - Please add an autograding key.')
         return
-    # Gotta make view for Frattis Results, for now just redirect to assignment
+    # TODO: Crear vista que permita procesar los resultados entregados por el grader.
     return '/admin/course/{cid}/assignments/{aid}'.format(
                 cid=jobs.get_current_job().course_id, aid=assignment.id)
 

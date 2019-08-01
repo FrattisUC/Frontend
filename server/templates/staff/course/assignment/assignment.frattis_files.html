@@ -5,8 +5,32 @@
 {% block title %}{{ assignment.display_name }} - Frattis Autograder {% endblock %}
 
 {% block main %}
-<form method="POST" enctype="multipart/form-data" action="/upload">
-  <input type="file" name="file[]" multiple="">
-  <input type="submit" value="Send To Frattis">
-</form>
+<section class="content-header">
+  <h1>
+    {{ assignment.display_name }} - Frattis Autograder Submission
+    <small>{{ current_course.offering }}</small>
+  </h1>
+  <ol class="breadcrumb">
+    <li><a href="{{ url_for(".course", cid=current_course.id) }}">
+        <i class="fa fa-university"></i> {{ current_course.offering }}
+    </a></li>
+    <li><a href="{{ url_for('.course_assignments', cid=current_course.id) }}">
+      <i class="fa fa-list"></i> Assignments</a>
+    </li>
+    <li class="active hidden-xs"><a href="{{ url_for('.assignment', cid=current_course.id, aid=assignment.id) }}"><i class="fa fa-book"></i> {{ assignment.display_name }} </a></li>
+  </ol>
+</section>
+
+<!-- Don't close the content section -->
+<section class="content">
+  {% include 'alerts.html' %}
+  Please select the corresponding "info.json" and "test.json" files.
+
+  <form method="POST" enctype="multipart/form-data" action="{{url_for('.frattis_upload', cid=current_course.id, aid= assignment.id)}}">
+    {% call forms.render_form_bare(CSRFForm(), action_url=url_for('.frattis_upload', cid=current_course.id, aid= assignment.id)) %}
+      <input type="file" name="file[]" multiple="">
+      <input type="submit" value="Send To Frattis">
+    {% endcall %}
+  </form>
+
 {% endblock %}

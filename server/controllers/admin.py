@@ -944,28 +944,7 @@ def autograde(cid, aid):
         return redirect(url_for('.course_job', cid=cid, job_id=job.id))
     return redirect(url_for('.assignment', cid=cid, aid=aid))
 
-@admin.route("/course/<int:cid>/assignments/<int:aid>/frattis_autograde",
-             methods=["POST"])
-@is_staff(course_arg='cid')
-def frattis_autograde(cid, aid):
-    courses, current_course = get_courses(cid)
-    assign = Assignment.query.filter_by(id=aid, course_id=cid).one_or_none()
-    if not assign or not Assignment.can(assign, current_user, 'grade'):
-        flash('Cannot access assignment', 'error')
-        return abort(404)
-    form = forms.CSRFForm()
-    if form.validate_on_submit():
-        job = jobs.enqueue_job(
-            autograder.frattis_autograde_assignment,
-            description='Autograde {}'.format(assign.display_name),
-            result_kind='link',
-            timeout=2 * 60 * 60,  # 2 hours
-            course_id=cid,
-            user_id=current_user.id,
-            assignment_id=assign.id)
-        return redirect(url_for('.course_job', cid=cid, job_id=job.id))
-    return redirect(url_for('.assignment', cid=cid, aid=aid))
-
+# Get the form to submit to frattis
 @admin.route("/course/<int:cid>/assignments/<int:aid>/frattis_files",
              methods=["GET"])
 @is_staff(course_arg='cid')
@@ -979,6 +958,37 @@ def frattis_files(cid, aid):
                        courses=courses,
                        current_course=current_course,
                        assignment=assign)
+
+# Check your files are "info.json" and "test.json", then send to Frattis.
+@admin.route("/course/<int:cid>/assignments/<int:aid>/frattis_upload",
+             methods=["POST"])
+@is_staff(course_arg='cid')
+def frattis_upload(cid, aid):
+    courses, current_course = get_courses(cid)
+    assign = Assignment.query.filter_by(id=aid, course_id=cid).one_or_none()
+    frattis_files = request.files.getlist("file[]")
+    # TODO: Merge frattis_files with assignment_submissions
+    if not assign or not Assignment.can(assign, current_user, 'grade'):
+        flash('Cannot access assignment', 'error')
+        return abort(404)
+    if len(frattis_files) != 2 or not (set(['info.json', 'test.json']) <= set(map(lambda x: x.filename, frattis_files))):
+        flash('You must send only two files: "info.json" and "test.json".', 'error')
+        return render_template('staff/course/assignment/assignment.frattis_files.html',
+                       courses=courses,
+                       current_course=current_course,
+                       assignment=assign)
+    # Send to Frattis
+    # Here you have to make the job to send the request to the backend, and wait the response.
+    #job = jobs.enqueue_job(
+    #        autograder.frattis_autograde_assignment,
+    #        description='Autograde {}'.format(assign.display_name),
+    #        result_kind='link',
+    #        timeout=2 * 60 * 60,  # 2 hours
+    #        course_id=cid,
+    #        user_id=current_user.id,
+    #        assignment_id=assign.id,
+    #        files=frattis_files)
+    return True
 
 @admin.route("/course/<int:cid>/assignments/<int:aid>/upload",
             methods=["GET","POST"])
