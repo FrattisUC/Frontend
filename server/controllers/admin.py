@@ -966,6 +966,19 @@ def frattis_autograde(cid, aid):
         return redirect(url_for('.course_job', cid=cid, job_id=job.id))
     return redirect(url_for('.assignment', cid=cid, aid=aid))
 
+@admin.route("/course/<int:cid>/assignments/<int:aid>/frattis_files",
+             methods=["GET"])
+@is_staff(course_arg='cid')
+def frattis_files(cid, aid):
+    courses, current_course = get_courses(cid)
+    assign = Assignment.query.filter_by(id=aid, course_id=cid).one_or_none()
+    if not assign or not Assignment.can(assign, current_user, 'grade'):
+        flash('Cannot access assignment', 'error')
+        return abort(404)
+    return render_template('staff/course/assignment/assignment.frattis_files.html',
+                       courses=courses,
+                       current_course=current_course,
+                       assignment=assign)
 
 @admin.route("/course/<int:cid>/assignments/<int:aid>/upload",
             methods=["GET","POST"])

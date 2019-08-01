@@ -104,12 +104,9 @@
                         </button>
                     {% endcall %}
                  </li>
-                 <li>
-                  {% call forms.render_form_bare(CSRFForm(), action_url=url_for('.frattis_autograde', cid=current_course.id, aid=assignment.id), class_='form') %}
-                      <button type="submit" class="ag-submit-btn" data-confirm="Send all submissions to Frattis Autograder?"> <i class="fa fa-send"></i> Send to Frattis Autograder
-                      </button>
-                  {% endcall %}
-                </li>
+                  <li> <a href="{{ url_for('.frattis_files', cid=current_course.id, aid=assignment.id) }}" type="button">
+                    <i class="fa fa-send"></i> Send to Frattis Autograder
+                  </a></li>
                   <li> <a href="{{ url_for('.templates', cid=current_course.id, aid=assignment.id) }}" type="button">
                      <i class="fa fa fa-file-text-o"></i> Edit Assignment Template
                   </a></li>

@@ -1,0 +1,12 @@
+{% extends "staff/base.html" %}
+{% import 'staff/_formhelpers.html' as forms %}
+{% import 'staff/_helpers.html' as helpers %}
+
+{% block title %}{{ assignment.display_name }} - Frattis Autograder {% endblock %}
+
+{% block main %}
+<form method="POST" enctype="multipart/form-data" action="/upload">
+  <input type="file" name="file[]" multiple="">
+  <input type="submit" value="Send To Frattis">
+</form>
+{% endblock %}

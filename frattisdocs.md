@@ -1,7 +1,12 @@
-# Flujo de la Comunicación
+# Documentación API Servicio de Corrección de Pruebas
+
+Esta documentación es tentativa, y está sujeta a cambios por parte del equipo de desarrollo del ipre.
+
+## Flujo de la Comunicación
 
 - Server emite un [POST] al autograder, con el siguiente contenido:
-```
+
+```JSON
 {
     headers: {
         authorization: JWT-token,
@@ -13,7 +18,8 @@
 ```
 
 - Ante una respuesta positiva, se recibe la siguiente response:
-```
+
+```JSON
 {
     headers: {
         status_code: 200
@@ -25,7 +31,8 @@
 ```
 
 - Al querer consultar el estado de un assignment, se hace un [GET] al autograder, con el siguiente contenido:
-```
+
+```JSON
 {
     headers: {
         authorization: JWT-token,
@@ -37,7 +44,8 @@
 ```
 
 - Primer caso: Assignment revisado completamente, en donde la respuesta tendrá el siguiente formato:
-```
+
+```JSON
 {
     headers: {
         status_code: 200
@@ -49,7 +57,8 @@
 ```
 
 - Segundo caso: Assignment no está revisado todavía, en donde la respuesta tendrá el siguiente formato:
-```
+
+```JSON
 {
     headers: {
         status_code: 204
@@ -61,7 +70,8 @@
 ```
 
 - Tercer caso: Assignment no existe, en donde la respuesta tendrá el siguiente formato:
-```
+
+```JSON
 {
     headers: {
         status_code: 404
@@ -72,18 +82,20 @@
 }
 ```
 
-# Estructura de los distintos archivos y carpetas
+## Estructura de los distintos archivos y carpetas
 
-## Estructura de .zip a entregar al grader:
+### Estructura de .zip a entregar al grader
+
 - Carpeta (.zip) con nombre "assignment"
-    - Sub Carpeta "submissions"
-        - Una Sub Carpeta por Alumno (nombre alumno - mail)
-            - Contenido del submission
-    - Archivo Info, con la info del assignment
-    - Archivo Test, con formato definido más abajo
+  - Sub Carpeta "submissions"
+    - Una Sub Carpeta por Alumno (nombre alumno - mail)
+      - Contenido del submission
+  - Archivo Info, con la info del assignment
+  - Archivo Test, con formato definido más abajo
 
-## Formato de un Archivo "Info":
-```
+### Formato de un Archivo "Info"
+
+```JSON
 {
   "user": "test", # Quien mandó a corregir
   "name": "Division", # Nombre del Assignment
@@ -91,8 +103,9 @@
 }
 ```
 
-## Formato de un Archivo "Test":
-```
+### Formato de un Archivo "Test"
+
+```JSON
 {
   "test_0": {   # Nombre del test
     "input": [1, 3], # Cuales son los inputs a probar
@@ -114,12 +127,13 @@
 }
 ```
 
-## Formato de un archivo scores.js
-```
+### Formato de un archivo scores.js
+
+```JSON
 {
-    "username_1": 
+    "username_1":
     {
-        "test_0": 
+        "test_0":
         {
             "sts": 1,
             "ext": 0
