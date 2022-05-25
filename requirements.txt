@@ -47,7 +47,7 @@ Flask-RESTful==0.3.5
 Flask-Testing>=0.5.0,<1.0
 Flask-RQ==0.2
 
-pyjwt==1.6.1
+pyjwt==2.4.0
 
 # Flask DB Extensions
 # Flask-SQLAlchemy==2.2
